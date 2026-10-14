@@ -45,7 +45,11 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   kio-extras \
   dosfstools \
   exfatprogs \
-  deconf \
+  dconf \
+  breeze-gtk \
+  xdg-desktop-portal-gtk \
+  xsettingsd \
+  cantarell-fonts \
   $NVIDIA_PKGS
 
 echo "==> 2. Setting up SDDM & Bluetooth inside snapshot..."
