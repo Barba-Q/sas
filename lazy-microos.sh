@@ -6,6 +6,7 @@ sudo transactional-update pkg install \
   patterns-kde-kde_plasma \
   sddm \
   flatpak \
+  firefox \
   konsole \
   discover6 \
   discover6-backend-flatpak \
@@ -46,7 +47,7 @@ EOF
 
 sudo systemctl enable flatpak-cleanup.timer
 
-echo "==> 4. Firstboot for flatpak configuration and firefox installation"
+echo "==> 4. Firstboot for flatpak configuration"
 cat << 'EOF' | sudo tee /etc/systemd/system/oma-firstboot.service > /dev/null
 [Unit]
 Description=Oma System Firstboot Setup
@@ -57,7 +58,6 @@ Wants=network-online.target
 Type=oneshot
 ExecStart=/bin/bash -c '\
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-  flatpak install -y flathub org.mozilla.firefox && \
   systemctl disable oma-firstboot.service && \
   rm /etc/systemd/system/oma-firstboot.service'
 
