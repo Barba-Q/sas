@@ -9,10 +9,10 @@ sudo transactional-update pkg install \
   konsole \
   discover6 \
   discover6-backend-flatpak \
-  plasma-nm \
-  plasma-pa \
-  polkit-kde-agent-1 \
-  kscreen \
+  plasma6-nm \
+  plasma6-pa \
+  polkit-kde-agent-6 \
+  kscreen6 \
   xf86-input-libinput \
   Mesa
 
