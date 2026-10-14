@@ -4,7 +4,7 @@ set -e
 echo "==> 0. Checking for NVIDIA Hardware..."
 TU_EXTRA_ARGS=""
 if grep -q "0x10de" /sys/bus/pci/devices/*/vendor 2>/dev/null; then
-  echo "==> NVIDIA GPU detected! Adding repository and using '-c' for transactional-update..."
+  echo "==> NVIDIA GPU detected! Installing driver"
   sudo transactional-update run zypper ar -f https://download.nvidia.com/opensuse/tumbleweed/ NVIDIA_TW || true
   NVIDIA_PKGS="nvidia-open-driver-G06-kmp-default nvidia-glG06 nvidia-computeG06 nvidia-video-G06"
   TU_EXTRA_ARGS="-c"
