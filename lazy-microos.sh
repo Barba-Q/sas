@@ -1,6 +1,22 @@
 #!/bin/bash
 set -e
 
+##########################################################################################################
+# Description:
+# This script will install the plasma desktop, flatpak support and some essential tools on microos
+# In fact it's pretty much kalpa but set up with this extra step
+# Only benefit is that this script will install nvidia driver if such hardware is detected
+#
+# Usage:
+# After installing microos from .iso or agama installer, log in an type:
+# bash <(curl -sL https://microos.knietief.com/lazy-microos.sh)
+# This will download and execute this script
+#
+# Notes:
+# This script was made with AI and is reviewed and tested by human beings on real hardware
+##########################################################################################################
+
+
 echo "==> 0. Checking for NVIDIA Hardware..."
 TU_EXTRA_ARGS=""
 if grep -q "0x10de" /sys/bus/pci/devices/*/vendor 2>/dev/null; then
