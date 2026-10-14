@@ -1,6 +1,20 @@
 #!/bin/bash
 set -e
 
+echo "==> 0. Checking for NVIDIA Hardware..."
+if grep -q "0x10de" /sys/bus/pci/devices/*/vendor 2>/dev/null; then
+  echo "==> NVIDIA GPU detected! Installing Driver with open kernel modules (G06)..."
+  
+  # Add repo
+  sudo transactional-update run zypper ar -f https://download.nvidia.com/opensuse/tumbleweed/ NVIDIA_TW || true
+  
+  # install drivers
+  NVIDIA_PKGS="nvidia-open-driver-G06-kmp-default nvidia-glG06 nvidia-computeG06 nvidia-video-G06"
+else
+  echo "==> No NVIDIA GPU found. skipping."
+  NVIDIA_PKGS=""
+fi
+
 echo "==> 1. Install desktop"
 sudo transactional-update pkg install \
   patterns-kde-kde_plasma \
@@ -22,7 +36,8 @@ sudo transactional-update pkg install \
   polkit-kde-agent-6 \
   kscreen6 \
   xf86-input-libinput \
-  Mesa
+  Mesa \
+  $NVIDIA_PKGS
 
 echo "==> 2. Set up SDDM"
 sudo systemctl set-default graphical.target
