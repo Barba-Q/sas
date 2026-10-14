@@ -45,6 +45,7 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   kio-extras \
   dosfstools \
   exfatprogs \
+  deconf \
   $NVIDIA_PKGS
 
 echo "==> 2. Setting up SDDM & Bluetooth inside snapshot..."
@@ -107,5 +108,18 @@ EOF
   systemctl enable oma-firstboot.service
 '
 
+echo "==> 6. Configuring Polkit"
+ACTUAL_USER=${SUDO_USER:-$USER}
+sudo transactional-update -c run bash -c "
+  cat << EOF > /etc/polkit-1/rules.d/00-nopasswd-user.rules
+polkit.addRule(function(action, subject) {
+    if (subject.user === \"$ACTUAL_USER\") {
+        return polkit.Result.YES;
+    }
+});
+EOF
+"
+
 echo "==> Setup complete! Rebooting into new snapshot..."
 sudo transactional-update reboot
+sudo reboot
