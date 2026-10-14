@@ -5,6 +5,8 @@ echo "==> 1. Install desktop"
 sudo transactional-update pkg install \
   patterns-kde-kde_plasma \
   sddm \
+  bluez \
+  bluedevil6 \
   flatpak \
   firefox \
   konsole \
@@ -12,6 +14,11 @@ sudo transactional-update pkg install \
   discover6-backend-flatpak \
   plasma6-nm \
   plasma6-pa \
+  partitionmanager \
+  gwenview \
+  kate \
+  spectacle \
+  okular \
   polkit-kde-agent-6 \
   kscreen6 \
   xf86-input-libinput \
@@ -19,7 +26,7 @@ sudo transactional-update pkg install \
 
 echo "==> 2. Set up SDDM"
 sudo systemctl set-default graphical.target
-sudo systemctl enable --force sddm
+sudo systemctl enable --force sddm bluetooth
 
 echo "==> 3. Create Flatpak cleanup"
 sudo mkdir -p /etc/systemd/system
