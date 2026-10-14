@@ -37,6 +37,14 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   kscreen6 \
   xf86-input-libinput \
   Mesa \
+  ark \
+  p7zip \
+  unrar \
+  unzip \
+  udisks2 \
+  kio-extras \
+  dosfstools \
+  exfatprogs \
   $NVIDIA_PKGS
 
 echo "==> 2. Setting up SDDM & Bluetooth inside snapshot..."
