@@ -21,8 +21,17 @@ set -e
 echo "==> 0. Checking for NVIDIA Hardware..."
 TU_EXTRA_ARGS=""
 if grep -q "0x10de" /sys/bus/pci/devices/*/vendor 2>/dev/null; then
-  echo "==> NVIDIA GPU detected! Adding repository..."
+  echo "==> NVIDIA GPU detected! Adding repository & enabling auto-license agreement..."
   sudo transactional-update run zypper ar -f https://download.nvidia.com/opensuse/tumbleweed/ NVIDIA_TW || true
+  
+  # Enable auto-license agreement & auto GPG-key import for working transactional updates
+  sudo transactional-update -c run bash -c '
+    sed -i "s/#\? *autoAgreeWithLicenses =.*/autoAgreeWithLicenses = yes/" /etc/zypp/zypp.conf 2>/dev/null || true
+    sed -i "s/#\? *autoAgreeWithLicenses =.*/autoAgreeWithLicenses = yes/" /etc/zypp/zypper.conf 2>/dev/null || true
+    mkdir -p /etc/transactional-update.conf.d
+    echo "ZYPPER_AUTO_IMPORT_KEYS=1" > /etc/transactional-update.conf.d/nvidia.conf
+  '
+
   NVIDIA_PKGS="nvidia-open-driver-G06-kmp-default nvidia-glG06 nvidia-computeG06 nvidia-video-G06"
   TU_EXTRA_ARGS="-c"
 else
