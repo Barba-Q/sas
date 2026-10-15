@@ -4,18 +4,19 @@ set -e
 ##########################################################################################################
 # Description:
 # This script will install the plasma desktop, flatpak support and some essential tools on microos
-# In fact it's pretty much kalpa but set up with this extra step
-# Only benefit is that this script will install nvidia driver if such hardware is detected
-#
+# In fact it's pretty much kalpa with preconfigured nvidia support and flatpak cleanup routine
+# 
 # Usage:
-# After installing microos from .iso or agama installer, log in an type:
-# bash <(curl -sL https://microos.knietief.com/lazy-microos.sh)
+# After installing microos from .iso or agama installer, log in and type:
+# "bash <(curl -sL https://microos.knietief.com)"
 # This will download and execute this script
 #
 # Notes:
 # This script was made with AI and is reviewed and tested by human beings on real hardware
+#
+# Nvidia utilization is considered testing, time will tell how much the additional repository
+# will confuse micro-os's automatic update routine. As for now, it works as intended
 ##########################################################################################################
-
 
 echo "==> 0. Checking for NVIDIA Hardware..."
 TU_EXTRA_ARGS=""
@@ -29,16 +30,13 @@ else
   NVIDIA_PKGS=""
 fi
 
-echo "==> 1. Installing Host packages (with KDE Plasma recommendations)..."
+echo "==> 1. Installing Host packages..."
 sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   patterns-kde-kde_plasma \
   plasma6-desktop \
   plasma6-workspace \
   sddm \
-  bluez \
-  bluedevil6 \
   flatpak \
-  firefox \
   konsole \
   discover6 \
   discover6-backend-flatpak \
@@ -61,16 +59,25 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   kio-extras \
   dosfstools \
   exfatprogs \
+  bluez \
+  bluedevil6 \
   dconf \
   breeze-gtk \
   xdg-desktop-portal-gtk \
   xsettingsd \
   cantarell-fonts \
+  cups \
+  cups-filters \
+  cups-pk-helper \
+  print-manager \
+  sane-backends \
+  skanlite \
+  firefox \
   $NVIDIA_PKGS
 
-echo "==> 2. Setting up SDDM & Bluetooth inside snapshot..."
+echo "==> 2. Setting up SDDM, Bluetooth & Printing inside snapshot..."
 sudo transactional-update -c run systemctl set-default graphical.target
-sudo transactional-update -c run systemctl enable --force sddm bluetooth
+sudo transactional-update -c run systemctl enable --force sddm bluetooth cups
 
 echo "==> 3. Configuring global GTK button layout..."
 sudo transactional-update -c run bash -c '
@@ -111,24 +118,24 @@ EOF
 
 echo "==> 5. Configuring Firstboot service for Flathub integration..."
 sudo transactional-update -c run bash -c '
-  cat << "EOF" > /etc/systemd/system/oma-firstboot.service
+  cat << "EOF" > /etc/systemd/system/firstboot.service
 [Unit]
-Description=Oma System Firstboot Setup
+Description=System Firstboot Setup
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && systemctl disable oma-firstboot.service && rm /etc/systemd/system/oma-firstboot.service"
+ExecStart=/bin/bash -c "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && systemctl disable firstboot.service && rm /etc/systemd/system/firstboot.service"
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-  systemctl enable oma-firstboot.service
+  systemctl enable firstboot.service
 '
 
-echo "==> 6. Configuring Polkit"
+echo "==> 6. Configuring Polkit..."
 ACTUAL_USER=${SUDO_USER:-$USER}
 sudo transactional-update -c run bash -c "
   cat << EOF > /etc/polkit-1/rules.d/00-nopasswd-user.rules
