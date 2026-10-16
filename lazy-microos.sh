@@ -83,6 +83,9 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   skanlite \
   firefox \
   gamemode \
+  rtkit \
+  xdg-utils \
+  zenity \
   $NVIDIA_PKGS
 
 echo "==> 2. Setting up SDDM, Bluetooth & Printing inside snapshot..."
