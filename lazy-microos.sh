@@ -52,6 +52,8 @@ sudo transactional-update $TU_EXTRA_ARGS run zypper in -y --recommends \
   plasma6-nm \
   plasma6-pa \
   partitionmanager \
+  ffmpeg \
+  fuse \
   gwenview \
   kate \
   spectacle \
